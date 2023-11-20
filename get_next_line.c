@@ -6,87 +6,94 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 16:33:15 by akovalev          #+#    #+#             */
-/*   Updated: 2023/11/17 18:31:29 by akovalev         ###   ########.fr       */
+/*   Updated: 2023/11/20 19:03:56 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 
-// char	*ft_strjoin_free(char *s1, char *s2)
-// {
-// 	char	*result;
+char	*ft_strjoin_free(char *s1, char *s2)
+{
+	char	*result;
 
-// 	if (!s1 || !s2)
-// 		return (NULL);
+	if (!s1 || !s2)
+		return (NULL);
 
-// 	result = ft_strjoin(s1, s2);
-// 	free(s1);
-// 	free(s2);
+	result = ft_strjoin(s1, s2);
+	free(s1);
+	free(s2);
 
-// 	return (result);
-// }
+	return (result);
+}
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
-	char		*temp;
+	static char	buffer[BUFFER_SIZE];
 	char		*ptr;
 	char		*str;
 	int			bytes_read;
+	int 		i;
+	
+	i = 0;
 
-	if (buffer == NULL)
-		buffer = calloc(BUFFER_SIZE, 1);
-	//if (!buffer)
-	//	buffer = ft_strdup("");
 	if (fd < 0)
 		return (NULL);
-	temp = malloc(BUFFER_SIZE + 1);
-	if (!temp)
+	str = ft_strdup("");
+
+	if (*buffer)
 	{
-		free(buffer);
-		return (NULL);
+		ptr = ft_strchr(buffer, '\n');
+		if (ptr)
+		{
+			*ptr = '\0';
+			str = ft_strjoin(str, buffer);
+			ptr++;
+			while (*ptr)
+			{
+				buffer[i] = *ptr;
+				i++;
+				ptr++;
+			}
+			return (str);
+		}
+		else
+			str = ft_strjoin(str, buffer);
 	}
 
 	bytes_read = 1;
-	str = ft_strdup("");
-	if (buffer[0] != '\0')
-	{
-		printf("\nbuffer is now: %s\n", buffer);
-		str = ft_strjoin(str, buffer);
-		printf("\nstr is now: %s\n", str);
-		free (buffer);
-	}
+	
 	while (bytes_read > 0)
 	{
-		bytes_read = read(fd, temp, BUFFER_SIZE);
-		printf("\ntemp is now: %s\n", temp);
-		//temp[bytes_read] = '\0';
-		if ((ptr = ft_strchr(temp, '\n')) != NULL)
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if ((ptr = ft_strchr(buffer, '\n')) != NULL)
 			printf("/n found /n");
 
 		if (ptr)
 		{
-			printf("\nbuffer is now: %s\n", buffer);
-			buffer = ft_strjoin(buffer, temp);
-			printf("\nbuffer is now: %s\n", buffer);
 			*ptr = '\0';
-			printf("\nssstemp is now: %s\n", temp);
-			str = ft_strjoin(str, temp);
-			printf("\nstr is now: %s\n", str);
+			str = ft_strjoin(str, buffer);
+			ptr++;
+			i = 0;
+			while (*ptr)
+			{
+				buffer[i] = *ptr;
+				i++;
+				ptr++;
+			}
+			while (i < BUFFER_SIZE)
+				buffer[i] = '\0';
+			printf("\nstring is now: %s\n", str);
 			break ;
 		}
 		else
 		{
-			str = ft_strjoin(str, temp);
-			printf("\n str now is : %s\n", str);
+			str = ft_strjoin(str, buffer);
+			printf("\n Str now is : %s\n", str);
 		}
 	}
 
-	if (temp != NULL)
-		free (temp);
-
-	if (bytes_read <= 0 && str[0] == '\0' && buffer != NULL)
+	if (bytes_read <= 0 && str[0] == '\0' && *buffer)
 	{
 		free(buffer);
 		return (NULL);
@@ -96,21 +103,21 @@ char	*get_next_line(int fd)
 }
 
 
-// int	main (void)
-// {
-// 	char	*str;
-// 	int		fd;
+int	main (void)
+{
+	char	*str;
+	int		fd;
 
-// 	str = calloc(1, 1);
-// 	fd = open("test.txt", O_RDONLY);
-// 	if (fd == -1)
-// 		return (-1);
-// 	while (str != NULL)
-// 	{
-// 		str = get_next_line(fd);
-// 		//printf("file contents: %s\n", str);
-// 	}
-// 	free(str);
-// 	close (fd);
-// 	return (0);
-// }
+	str = calloc(1, 1);
+	fd = open("test.txt", O_RDONLY);
+	if (fd == -1)
+		return (-1);
+	while (str != NULL)
+	{
+		str = get_next_line(fd);
+		//printf("file contents: %s\n", str);
+	}
+	free(str);
+	close (fd);
+	return (0);
+}

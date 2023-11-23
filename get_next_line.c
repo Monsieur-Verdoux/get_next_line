@@ -55,36 +55,76 @@ char	*get_next_line(int fd)
 				i++;
 				ptr++;
 			}
+			while (i < BUFFER_SIZE)
+			{
+				buffer[i] = '\0';
+				i++;
+			}
+		
+			printf("\nBuffer for the next string is: %s\n", buffer);
 			return (str);
 		}
 		else
+		{
 			str = ft_strjoin(str, buffer);
+			printf("\nString from remaining buffer is now: %s\n", str);
+			i = 0;
+			while (i < BUFFER_SIZE)
+			{
+				buffer[i] = '\0';
+				i++;
+			}
+		}
 	}
+	i = 0;
+	while (i < BUFFER_SIZE && buffer[i] != EOF)
+			{
+				buffer[i] = '\0';
+				i++;
+				//printf("\nbuffer is now: %s\n", buffer);
+			}
 
 	bytes_read = 1;
 	
 	while (bytes_read > 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		int j = bytes_read;
+		while (j < BUFFER_SIZE)
+			{
+				buffer[j] = '\0';
+				j++;
+				//printf("\nbuffer is now: %s\n", buffer);
+			}
+		printf("\nBuffer after initial read: %s\n", buffer);
 		if ((ptr = ft_strchr(buffer, '\n')) != NULL)
-			printf("/n found /n");
+			printf("\n Newline found \n");
 
 		if (ptr)
 		{
 			*ptr = '\0';
 			str = ft_strjoin(str, buffer);
+			printf("\nString after finding newline not in buffer is now: %s\n", str);
 			ptr++;
+			
 			i = 0;
-			while (*ptr)
+			while (*ptr && (i < bytes_read))
 			{
 				buffer[i] = *ptr;
 				i++;
 				ptr++;
 			}
+			printf("\nRemaining buffer for the next call is now: %s\n", buffer);
+			printf("\nBytes_read is now: %d\n", bytes_read);
 			while (i < BUFFER_SIZE)
+			{
 				buffer[i] = '\0';
+				i++;
+				//printf("\nbuffer is now: %s\n", buffer);
+			}
+			printf("\nAfter zeroing, remaining buffer for the next call is now: %s\n", buffer);
 			printf("\nstring is now: %s\n", str);
-			break ;
+			return(str) ;
 		}
 		else
 		{
@@ -92,14 +132,14 @@ char	*get_next_line(int fd)
 			printf("\n Str now is : %s\n", str);
 		}
 	}
-
-	if (bytes_read <= 0 && str[0] == '\0' && *buffer)
+	
+	if (bytes_read <= 0 && str == NULL)
 	{
-		free(buffer);
+		//free(buffer);
 		return (NULL);
 	}
-
-	return (str);
+	
+	return (str);	
 }
 
 
@@ -107,15 +147,18 @@ int	main (void)
 {
 	char	*str;
 	int		fd;
+	int i = 0;
 
-	str = calloc(1, 1);
+	//str = calloc(1, 1);
+	str = "test";
 	fd = open("test.txt", O_RDONLY);
 	if (fd == -1)
 		return (-1);
-	while (str != NULL)
+	while (str[0] != '\0')
 	{
 		str = get_next_line(fd);
-		//printf("file contents: %s\n", str);
+		printf("\nString[%d] is done: %s\n", i, str);
+		i++;
 	}
 	free(str);
 	close (fd);

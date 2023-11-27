@@ -6,11 +6,62 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 12:59:11 by akovalev          #+#    #+#             */
-/*   Updated: 2023/11/20 18:30:58 by akovalev         ###   ########.fr       */
+/*   Updated: 2023/11/27 17:15:22 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+void	*ft_memmove(void *dst, const void *src, size_t len)
+{
+	unsigned char		*pdst;
+	const unsigned char	*psrc;
+	unsigned char		*last_dst;
+	const unsigned char	*last_src;
+
+	if (dst == NULL && src == NULL)
+		return (NULL);
+	pdst = (unsigned char *)dst;
+	psrc = (unsigned char *)src;
+	if (pdst < psrc)
+		while (len--)
+			*pdst++ = *psrc++;
+	else
+	{
+		last_dst = (unsigned char *)dst + (len - 1);
+		last_src = (unsigned char *)src + (len - 1);
+		while (len--)
+			*last_dst-- = *last_src--;
+	}
+	return (dst);
+}
+
+void	ft_bzero(void *s, size_t n)
+{
+	unsigned char	*str;
+
+	str = (unsigned char *)s;
+	while (n--)
+		*str++ = '\0';
+}
+
+char	*ft_strncpy(char *dest, char *src, unsigned int n)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i < n && src[i] != '\0')
+	{
+		dest[i] = src[i];
+		i++;
+	}
+	while (i < n)
+	{
+		dest[i] = '\0';
+		i++;
+	}
+	return (dest);
+}
 
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 {

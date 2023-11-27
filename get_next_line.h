@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 16:33:41 by akovalev          #+#    #+#             */
-/*   Updated: 2023/11/17 15:07:24 by akovalev         ###   ########.fr       */
+/*   Updated: 2023/11/27 16:27:49 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@ char	*ft_substr(char const *s, unsigned int start, size_t len);
 size_t	ft_strlen(const char *s);
 char	*ft_strjoin(char const *s1, char const *s2);
 char	*ft_strdup(const char *s1);
+char	*ft_strncpy(char *dest, char *src, unsigned int n);
+void	ft_bzero(void *s, size_t n);
+void	*ft_memmove(void *dst, const void *src, size_t len);
 
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42

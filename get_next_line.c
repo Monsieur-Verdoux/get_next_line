@@ -6,161 +6,175 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 16:33:15 by akovalev          #+#    #+#             */
-/*   Updated: 2023/11/20 19:03:56 by akovalev         ###   ########.fr       */
+/*   Updated: 2023/11/27 19:15:52 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 
-char	*ft_strjoin_free(char *s1, char *s2)
-{
-	char	*result;
+// char	*ft_strjoin_free(char *s1, char *s2)
+// {
+// 	char	*result;
 
-	if (!s1 || !s2)
-		return (NULL);
+// 	if (!s1 || !s2)
+// 		return (NULL);
 
-	result = ft_strjoin(s1, s2);
-	free(s1);
-	free(s2);
+// 	result = ft_strjoin(s1, s2);
+// 	free(s1);
+// 	free(s2);
 
-	return (result);
-}
+// 	return (result);
+// }
 
 char	*get_next_line(int fd)
 {
-	static char	buffer[BUFFER_SIZE];
+	static char	buffer[BUFFER_SIZE + 1];
 	char		*ptr;
 	char		*str;
+	char		*temp;
 	int			bytes_read;
-	int 		i;
+	int			i;
+	int 		j;
+	size_t		str_len;
 	
 	i = 0;
 
-	if (fd < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read (fd, buffer, 0) < 0)
+	{
+		ft_bzero(buffer, BUFFER_SIZE);
 		return (NULL);
+	}
 	str = ft_strdup("");
-
+	if (str == NULL)
+	{
+		
+		return (NULL);
+	}
 	if (*buffer)
 	{
 		ptr = ft_strchr(buffer, '\n');
 		if (ptr)
 		{
 			*ptr = '\0';
-			str = ft_strjoin(str, buffer);
-			ptr++;
-			while (*ptr)
+			temp = str;
+			str = ft_strjoin(temp, buffer);
+			if (str == NULL)
 			{
-				buffer[i] = *ptr;
-				i++;
-				ptr++;
+				free (temp);
+				return (NULL);
 			}
-			while (i < BUFFER_SIZE)
+			free (temp);
+			temp = NULL;
+			temp = str;
+			str = ft_strjoin(str, "\n");
+			if (str == NULL)
 			{
-				buffer[i] = '\0';
-				i++;
+				free (temp);
+				return (NULL);
 			}
-		
-			printf("\nBuffer for the next string is: %s\n", buffer);
+			free (temp);
+			temp = NULL;
+			ft_strncpy(buffer, ptr + 1, BUFFER_SIZE);
 			return (str);
 		}
 		else
 		{
-			str = ft_strjoin(str, buffer);
-			printf("\nString from remaining buffer is now: %s\n", str);
-			i = 0;
-			while (i < BUFFER_SIZE)
+			temp = str;
+			str = ft_strjoin(temp, buffer);
+			if (str == NULL)
 			{
-				buffer[i] = '\0';
-				i++;
+				free (temp);
+				return (NULL);
 			}
+			free (temp);
+			temp = NULL;
+			ft_bzero(buffer, BUFFER_SIZE);
 		}
 	}
-	i = 0;
-	while (i < BUFFER_SIZE && buffer[i] != EOF)
-			{
-				buffer[i] = '\0';
-				i++;
-				//printf("\nbuffer is now: %s\n", buffer);
-			}
 
 	bytes_read = 1;
-	
 	while (bytes_read > 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		int j = bytes_read;
+		if (bytes_read == -1)
+			ft_bzero(buffer, BUFFER_SIZE);
+		j = bytes_read;
 		while (j < BUFFER_SIZE)
-			{
-				buffer[j] = '\0';
-				j++;
-				//printf("\nbuffer is now: %s\n", buffer);
-			}
-		printf("\nBuffer after initial read: %s\n", buffer);
-		if ((ptr = ft_strchr(buffer, '\n')) != NULL)
-			printf("\n Newline found \n");
+		{
+			buffer[j] = '\0';
+			j++;
+		}
+		ptr = ft_strchr(buffer, '\n');
 
 		if (ptr)
 		{
 			*ptr = '\0';
-			str = ft_strjoin(str, buffer);
-			printf("\nString after finding newline not in buffer is now: %s\n", str);
-			ptr++;
-			
-			i = 0;
-			while (*ptr && (i < bytes_read))
+			temp = str;
+			str = ft_strjoin(temp, buffer);
+			if (str == NULL)
 			{
-				buffer[i] = *ptr;
-				i++;
-				ptr++;
+				free (temp);
+				return (NULL);
 			}
-			printf("\nRemaining buffer for the next call is now: %s\n", buffer);
-			printf("\nBytes_read is now: %d\n", bytes_read);
-			while (i < BUFFER_SIZE)
+			free (temp);
+			temp = NULL;
+			temp = str;
+			str = ft_strjoin(str, "\n");
+			if (str == NULL)
 			{
-				buffer[i] = '\0';
-				i++;
-				//printf("\nbuffer is now: %s\n", buffer);
+				free (temp);
+				return (NULL);
 			}
-			printf("\nAfter zeroing, remaining buffer for the next call is now: %s\n", buffer);
-			printf("\nstring is now: %s\n", str);
-			return(str) ;
+			free (temp);
+			temp = NULL;
+			ft_strncpy(buffer, ptr + 1, BUFFER_SIZE);
+			return (str);
 		}
 		else
 		{
-			str = ft_strjoin(str, buffer);
-			printf("\n Str now is : %s\n", str);
+			temp = str;
+			str = ft_strjoin(temp, buffer);
+			if (str == NULL)
+			{
+				free (temp);
+				return (NULL);
+			}
+			free (temp);
+			temp = NULL;
+			ft_bzero(buffer, BUFFER_SIZE);
 		}
 	}
-	
-	if (bytes_read <= 0 && str == NULL)
+	str_len = ft_strlen(str);
+
+	if (str_len > 0 && str[str_len - 1] != '\n')
 	{
-		//free(buffer);
+		return (str);
+	}
+	else
+	{
+		free(str);
 		return (NULL);
 	}
+}
+
+
+// int	main (void)
+// {
+// 	char	*str;
+// 	int		fd;
+// 	int i = 0;
+
+// 	fd = open("test2.txt", O_RDONLY);
+// 	if (fd == -1)
+// 		return (-1);
+// 	while ((str = get_next_line(fd)) != NULL)
+// 	{
+// 		printf("\nString[%d] is done: %s\n", i, str);
+// 		free(str);
+// 		i++;
+// 	}
 	
-	return (str);	
-}
-
-
-int	main (void)
-{
-	char	*str;
-	int		fd;
-	int i = 0;
-
-	//str = calloc(1, 1);
-	str = "test";
-	fd = open("test.txt", O_RDONLY);
-	if (fd == -1)
-		return (-1);
-	while (str[0] != '\0')
-	{
-		str = get_next_line(fd);
-		printf("\nString[%d] is done: %s\n", i, str);
-		i++;
-	}
-	free(str);
-	close (fd);
-	return (0);
-}
+// 	close (fd);
+// 	return (0);
+// }

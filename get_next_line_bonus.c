@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/16 16:33:15 by akovalev          #+#    #+#             */
-/*   Updated: 2023/11/28 18:53:35 by akovalev         ###   ########.fr       */
+/*   Created: 2023/11/28 18:40:13 by akovalev          #+#    #+#             */
+/*   Updated: 2023/11/28 18:53:37 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,15 +96,15 @@ static char	*read_lines(int fd, char *buffer)
 
 char	*get_next_line(int fd)
 {
-	static char	buffer[BUFFER_SIZE + 1];
+	static char	buffer[1024][BUFFER_SIZE + 1];
 	char		*str;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read (fd, buffer, 0) < 0)
+	if (fd < 0 || fd > 1023 || BUFFER_SIZE <= 0 || read (fd, buffer[fd], 0) < 0)
 	{
-		gnl_bzero(buffer, BUFFER_SIZE);
+		gnl_bzero(buffer[fd], BUFFER_SIZE);
 		return (NULL);
 	}
-	str = read_lines(fd, buffer);
+	str = read_lines(fd, buffer[fd]);
 	if (str == NULL)
 		return (NULL);
 	if (str[0] != '\0')

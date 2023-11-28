@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/28 18:40:13 by akovalev          #+#    #+#             */
-/*   Updated: 2023/11/28 18:53:37 by akovalev         ###   ########.fr       */
+/*   Updated: 2023/11/28 19:08:01 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,9 @@ char	*get_next_line(int fd)
 	static char	buffer[1024][BUFFER_SIZE + 1];
 	char		*str;
 
-	if (fd < 0 || fd > 1023 || BUFFER_SIZE <= 0 || read (fd, buffer[fd], 0) < 0)
+	if (fd < 0 || fd > 1023 || BUFFER_SIZE <= 0)
+		return (NULL);
+	if (read (fd, buffer[fd], 0) < 0)
 	{
 		gnl_bzero(buffer[fd], BUFFER_SIZE);
 		return (NULL);

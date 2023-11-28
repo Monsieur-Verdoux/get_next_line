@@ -6,33 +6,63 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 16:33:15 by akovalev          #+#    #+#             */
-/*   Updated: 2023/11/27 19:15:52 by akovalev         ###   ########.fr       */
+/*   Updated: 2023/11/28 16:54:13 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 
-// char	*ft_strjoin_free(char *s1, char *s2)
-// {
-// 	char	*result;
+static char	*handle_newline(char *ptr, char *str, char *buffer)
+{
+	char	*temp;
 
-// 	if (!s1 || !s2)
-// 		return (NULL);
+	*ptr = '\0';
+	temp = str;
+	str = ft_strjoin(temp, buffer);
+	if (str == NULL)
+	{
+		free (temp);
+		return (NULL);
+	}
+	free (temp);
+	temp = NULL;
+	temp = str;
+	str = ft_strjoin(str, "\n");
+	if (str == NULL)
+	{
+		free (temp);
+		return (NULL);
+	}
+	free (temp);
+	temp = NULL;
+	ft_strncpy(buffer, ptr + 1, BUFFER_SIZE);
+	return (str);
+}
 
-// 	result = ft_strjoin(s1, s2);
-// 	free(s1);
-// 	free(s2);
+static char	*handle_buffer(char *str, char *buffer)
+{
+	char	*temp;
 
-// 	return (result);
-// }
+	temp = str;
+	str = ft_strjoin(temp, buffer);
+	if (str == NULL)
+	{
+		free (temp);
+		return (NULL);
+	}
+	free (temp);
+	temp = NULL;
+	ft_bzero(buffer, BUFFER_SIZE);
+	return (str);
+}
 
 char	*get_next_line(int fd)
 {
 	static char	buffer[BUFFER_SIZE + 1];
 	char		*ptr;
 	char		*str;
-	char		*temp;
+	//char		*temp;
 	int			bytes_read;
 	int			i;
 	int 		j;
@@ -47,52 +77,17 @@ char	*get_next_line(int fd)
 	}
 	str = ft_strdup("");
 	if (str == NULL)
-	{
-		
 		return (NULL);
-	}
 	if (*buffer)
 	{
 		ptr = ft_strchr(buffer, '\n');
 		if (ptr)
-		{
-			*ptr = '\0';
-			temp = str;
-			str = ft_strjoin(temp, buffer);
-			if (str == NULL)
-			{
-				free (temp);
-				return (NULL);
-			}
-			free (temp);
-			temp = NULL;
-			temp = str;
-			str = ft_strjoin(str, "\n");
-			if (str == NULL)
-			{
-				free (temp);
-				return (NULL);
-			}
-			free (temp);
-			temp = NULL;
-			ft_strncpy(buffer, ptr + 1, BUFFER_SIZE);
-			return (str);
-		}
+			return (handle_newline(ptr, str, buffer));
 		else
-		{
-			temp = str;
-			str = ft_strjoin(temp, buffer);
-			if (str == NULL)
-			{
-				free (temp);
-				return (NULL);
-			}
-			free (temp);
-			temp = NULL;
-			ft_bzero(buffer, BUFFER_SIZE);
-		}
+			str = handle_buffer(str, buffer);
+		if (str == NULL)
+			return (NULL);
 	}
-
 	bytes_read = 1;
 	while (bytes_read > 0)
 	{
@@ -108,42 +103,11 @@ char	*get_next_line(int fd)
 		ptr = ft_strchr(buffer, '\n');
 
 		if (ptr)
-		{
-			*ptr = '\0';
-			temp = str;
-			str = ft_strjoin(temp, buffer);
-			if (str == NULL)
-			{
-				free (temp);
-				return (NULL);
-			}
-			free (temp);
-			temp = NULL;
-			temp = str;
-			str = ft_strjoin(str, "\n");
-			if (str == NULL)
-			{
-				free (temp);
-				return (NULL);
-			}
-			free (temp);
-			temp = NULL;
-			ft_strncpy(buffer, ptr + 1, BUFFER_SIZE);
-			return (str);
-		}
+			return (handle_newline(ptr, str, buffer));
 		else
-		{
-			temp = str;
-			str = ft_strjoin(temp, buffer);
-			if (str == NULL)
-			{
-				free (temp);
-				return (NULL);
-			}
-			free (temp);
-			temp = NULL;
-			ft_bzero(buffer, BUFFER_SIZE);
-		}
+			str = handle_buffer(str, buffer);
+		if (str == NULL)
+			return (NULL);
 	}
 	str_len = ft_strlen(str);
 

@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 12:59:11 by akovalev          #+#    #+#             */
-/*   Updated: 2023/11/28 18:53:35 by akovalev         ###   ########.fr       */
+/*   Updated: 2023/11/29 18:44:20 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,22 +22,24 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-char	*ft_strncpy(char *dest, char *src, unsigned int n)
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 {
-	unsigned int	i;
+	size_t	srclen;
 
-	i = 0;
-	while (i < n && src[i] != '\0')
+	srclen = 0;
+	if (dstsize > 0)
 	{
-		dest[i] = src[i];
-		i++;
+		while (srclen < dstsize - 1 && src[srclen] != '\0')
+		{
+			dst[srclen] = src[srclen];
+			srclen++;
+		}
+		if (srclen < dstsize)
+			dst[srclen] = '\0';
 	}
-	while (i < n)
-	{
-		dest[i] = '\0';
-		i++;
-	}
-	return (dest);
+	while (src[srclen] != '\0')
+		srclen++;
+	return (srclen);
 }
 
 char	*ft_strchr(const char *s, int c)

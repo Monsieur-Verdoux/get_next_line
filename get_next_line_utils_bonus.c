@@ -6,11 +6,11 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/17 12:59:11 by akovalev          #+#    #+#             */
-/*   Updated: 2023/11/29 18:53:06 by akovalev         ###   ########.fr       */
+/*   Updated: 2023/11/30 16:16:10 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlen(const char *s)
 {

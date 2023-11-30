@@ -6,7 +6,7 @@
 /*   By: akovalev <akovalev@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/16 16:33:15 by akovalev          #+#    #+#             */
-/*   Updated: 2023/11/29 19:39:31 by akovalev         ###   ########.fr       */
+/*   Updated: 2023/11/30 18:24:00 by akovalev         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,10 @@ static char	*read_lines(int fd, char *buffer)
 		return (NULL);
 	bytes_read = 1;
 	if (!*buffer)
+	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		buffer[bytes_read] = '\0';
+	}
 	while (bytes_read > 0)
 	{
 		ptr = ft_strchr(buffer, '\n');
